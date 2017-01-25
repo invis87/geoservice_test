@@ -7,13 +7,8 @@ import scala.util.Random
 class DataGenerator() {
   val random = new Random()
 
-  def generateUserMarks(usersCount: Int, maxMarksPerUser: Int): Seq[UserMark] = {
-    def randomUserMarks(userId: Int): Seq[UserMark] = {
-      val marksCount = random.nextInt(maxMarksPerUser) + 1
-      Range(0, marksCount).map(_ => UserMark(userId, randomEarthPoint()))
-    }
-
-    Range(0, usersCount).flatMap(id => randomUserMarks(id))
+  def generateUserMarks(usersCount: Int): Seq[UserMark] = {
+    Range(0, usersCount).map(id => UserMark(id, randomEarthPoint()))
   }
 
   def generateGeoTiles(tilesCount: Int, maxTileError: Int): Seq[GeoTile] = {

@@ -13,11 +13,10 @@ object GenerateData extends LazyLogging {
     val config = ConfigFactory.load().getConfig("data-generator")
 
     val userMarksCount = config.getInt("users-count")
-    val maxMarksPerUser = config.getInt("max-marks-per-user")
     val userMarksFile = new File(config.getString("user-marks-path"))
     createDirIfNotExists(userMarksFile.getParentFile)
     logger.info(s"Start generating $userMarksCount UserMarks to file `${userMarksFile.getAbsolutePath}`")
-    writeUserMarks(userMarksCount, maxMarksPerUser, userMarksFile)
+    writeUserMarks(userMarksCount, userMarksFile)
     logger.info("UserMarks generated successfully!")
 
     val geoTilesCount = config.getInt("geo-tiles-count")
@@ -29,16 +28,16 @@ object GenerateData extends LazyLogging {
     logger.info("GeoTiles generated successfully!")
   }
 
-  private def writeUserMarks(usersCount: Int, maxMarksPerUser: Int, file: File) = {
+  private def writeUserMarks(usersCount: Int, file: File) = {
     val generator = new DataGenerator()
-    val userMarks = generator.generateUserMarks(usersCount, maxMarksPerUser)
+    val userMarks = generator.generateUserMarks(usersCount)
     val bw = new BufferedWriter(new FileWriter(file))
     userMarks.foreach(uMark => bw.write(userMarkToString(uMark)))
     bw.close()
   }
 
   private def userMarkToString(userMark: UserMark): String = {
-    s"${userMark.userId},${userMark.coord.latitude},${userMark.coord.longitude}\n"
+    s"${userMark.userId},${userMark.location.latitude},${userMark.location.longitude}\n"
   }
 
   private def writeGeoTiles(geoTilesCount: Int, maxTileError: Int, file: File) = {
