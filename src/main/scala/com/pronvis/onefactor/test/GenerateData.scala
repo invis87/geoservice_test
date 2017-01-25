@@ -4,14 +4,17 @@ import java.io.{BufferedWriter, File, FileWriter}
 
 import com.pronvis.onefactor.test.data.UserMark
 import com.pronvis.onefactor.test.data.generator.Generator
+import com.typesafe.config.ConfigFactory
 
 object GenerateData {
 
   def main(args: Array[String]) {
-    val userMarksCount = 10 * 1000 * 1000
+    val config = ConfigFactory.load().getConfig("data-generator")
 
-    writeUserMarks(userMarksCount, new File("<path to file>"))
+    val userMarksCount = config.getInt("user-marks-count")
+    val userMarksFile = new File(config.getString("user-marks-path "))
 
+    writeUserMarks(userMarksCount, userMarksFile)
   }
 
   private def writeUserMarks(count: Int, file: File) = {

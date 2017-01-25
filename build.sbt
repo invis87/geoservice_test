@@ -27,3 +27,9 @@ libraryDependencies ++= {
 fork in run := true
 
 cancelable in Global := true
+
+mainClass in Compile := Some("com.pronvis.onefactor.test.Main")
+
+val dataGeneratorMain = "com.pronvis.onefactor.test/GenerateData"
+val generateData = TaskKey[Unit]("generate-data", "Generate UserMarks and GeoTiles data.")
+generateData := (runMain in Compile).toTask(s" $dataGeneratorMain").value
