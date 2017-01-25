@@ -2,8 +2,8 @@ package com.pronvis.onefactor.test
 
 import java.io.{BufferedWriter, File, FileWriter}
 
-import com.pronvis.onefactor.test.data.{GeoTile, UserMark}
 import com.pronvis.onefactor.test.data.generator.DataGenerator
+import com.pronvis.onefactor.test.serialization.CsvProtocol
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 
@@ -32,29 +32,21 @@ object GenerateData extends LazyLogging {
     val generator = new DataGenerator()
     val userMarks = generator.generateUserMarks(usersCount)
     val bw = new BufferedWriter(new FileWriter(file))
-    userMarks.foreach(uMark => bw.write(userMarkToString(uMark)))
+    userMarks.foreach(uMark => bw.write(CsvProtocol.userMarkToString(uMark)))
     bw.close()
-  }
-
-  private def userMarkToString(userMark: UserMark): String = {
-    s"${userMark.userId},${userMark.location.latitude},${userMark.location.longitude}\n"
   }
 
   private def writeGeoTiles(geoTilesCount: Int, maxTileError: Int, file: File) = {
     val generator = new DataGenerator()
     val geoTiles = generator.generateGeoTiles(geoTilesCount, maxTileError)
     val bw = new BufferedWriter(new FileWriter(file))
-    geoTiles.foreach(gTile => bw.write(geoTileToString(gTile)))
+    geoTiles.foreach(gTile => bw.write(CsvProtocol.geoTileToString(gTile)))
     bw.close()
-  }
-
-  private def geoTileToString(geoTile: GeoTile): String = {
-    s"${geoTile.coord.latitude},${geoTile.coord.longitude},${geoTile.distanceError}\n"
   }
 
   private def createDirIfNotExists(dir: File) = {
     if(!dir.exists()) {
-      //yes, we can fail here
+      //yes, we can fail here, cause don't use return type
       dir.mkdirs()
     }
   }

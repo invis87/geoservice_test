@@ -10,7 +10,7 @@ object GeoMath {
     degrees * Pi / 180
   }
 
-  def metersBetweenPoints(point1: EarthPoint, point2: EarthPoint): Long = {
+  def metersBetweenPoints(point1: EarthPoint, point2: EarthPoint): Double = {
     val p1Lat_rad = degreesToRadians(point1.latitude)
     val p1Lon_rad = degreesToRadians(point1.longitude)
     val p2Lat_rad = degreesToRadians(point2.latitude)
@@ -30,6 +30,6 @@ object GeoMath {
     )
     val x = p1Lat_sin * p2Lat_sin + p1Lat_cos * p2Lat_cos * delta_cos
 
-    round(atan2(y, x) * EarthRadiusInMeters)
+    atan2(y, x) * EarthRadiusInMeters
   }
 }
