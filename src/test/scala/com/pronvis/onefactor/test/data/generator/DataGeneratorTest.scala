@@ -1,6 +1,5 @@
-package com.pronvis.onefactor.test
+package com.pronvis.onefactor.test.data.generator
 
-import com.pronvis.onefactor.test.data.generator.DataGenerator
 import org.specs2.mutable.Specification
 
 class DataGeneratorTest extends Specification{

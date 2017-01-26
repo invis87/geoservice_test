@@ -11,13 +11,12 @@ import scala.io.Source
 
 object InMemoryUserMarksDao extends LazyLogging {
   def apply(file: File): InMemoryUserMarksDao = {
-    logger.debug(s"Start parsing file `${file.getAbsolutePath}` to create InMemoryUserMarkDao")
     val uMarks = Source.fromFile(file).getLines.map(line => {
       val uMark = CsvProtocol.stringToUserMark(line)
       uMark.userId -> uMark
     })
 
-    logger.debug("Parsing complete! Creating InMemoryUserMarkDao")
+    logger.debug("Parsing file `${file.getAbsolutePath}` to create InMemoryUserMarksDao...")
     new InMemoryUserMarksDao(TrieMap(uMarks.toSeq:_*))
   }
 }

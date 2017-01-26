@@ -36,13 +36,14 @@ object Main extends LazyLogging {
   private def startApplication(userMarksDao: IUserMarksDao, geoTilesDao: IGeoTilesDao) = {
     implicit val system = ActorSystem("geoservice")
 
-    val service = system.actorOf(RouteActor.props(userMarksDao, geoTilesDao), "main-actor")
+    val service = system.actorOf(GeoServiceActor.props(userMarksDao, geoTilesDao), "main-actor")
 
     implicit val timeout = Timeout(5.seconds) //todo: move to config
 
     val config = ConfigFactory.load()
     val interface = config.getString("spray.interface")
     val port = config.getInt("spray.port")
+    logger.debug("Application started!")
     IO(Http) ? Http.Bind(service, interface, port)
   }
 }

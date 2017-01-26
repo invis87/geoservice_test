@@ -32,8 +32,4 @@ class EarthDistanceTest extends Specification {
       }
     }
   }
-
-  "is Double enough for distance between two opposite Earth sides" in {
-    1 === 3
-  }
 }

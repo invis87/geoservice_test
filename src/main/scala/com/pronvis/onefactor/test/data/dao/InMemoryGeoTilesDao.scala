@@ -10,13 +10,12 @@ import scala.io.Source
 
 object InMemoryGeoTilesDao extends LazyLogging{
   def apply(file: File): InMemoryGeoTilesDao = {
-    logger.debug(s"Start parsing file `${file.getAbsolutePath}` to create InMemoryGeoTilesDao")
     val geoTiles = Source.fromFile(file).getLines.map(line => {
       val geoTile = CsvProtocol.stringToGeoTile(line)
       geoTile.coord -> geoTile
     }).toMap
 
-    logger.debug("Parsing complete! Creating InMemoryGeoTilesDao")
+    logger.debug("Parsing file `${file.getAbsolutePath}` to create InMemoryGeoTilesDao...")
     new InMemoryGeoTilesDao(geoTiles)
   }
 }
