@@ -61,7 +61,7 @@ trait GeoService extends HttpService with LazyLogging {
     Future {
       logger.debug(s"[addUserMark]: to add $newMark")
       userMarksDao.get(newMark.userId) match {
-        case Some(_) => OK(StringResponse(s"${ newMark.userId } already have a mark."))
+        case Some(_) => OK(StringResponses.userAlreadyHaveMark(newMark.userId))
         case None    =>
           userMarksDao.add(newMark.userId, newMark.markLocation)
           OK(StringResponses.markAdded(newMark.userId))
