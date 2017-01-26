@@ -6,4 +6,6 @@ object Responses {
   case class StringResponse(message: String)
   case class TileStatsResponse(marksInTile: Long)
 
+  val closeToMarkResponse = StringResponse("close to mark")
+  val farFromMarkResponse = StringResponse("far from mark")
 }

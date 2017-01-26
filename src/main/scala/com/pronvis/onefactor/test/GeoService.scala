@@ -2,6 +2,7 @@ package com.pronvis.onefactor.test
 
 import akka.util.Timeout
 import com.pronvis.onefactor.test.api.Requests.{AddUserMark, UpdateUserMark}
+import com.pronvis.onefactor.test.api.Responses
 import com.pronvis.onefactor.test.api.Responses.{ErrorResponse, StringResponse, TileStatsResponse}
 import com.pronvis.onefactor.test.data.{EarthPoint, TileCoord, UserMark}
 import com.pronvis.onefactor.test.data.dao.{IGeoTilesDao, IUserMarksDao}
@@ -42,16 +43,16 @@ trait GeoService extends HttpService with LazyLogging {
 
       isErrorBigger match {
         case None                => FAIL(ErrorResponse(400, "User do not have a mark OR there is no information about tile distance error in marker tile."))
-        case Some(isErrorBigger) => OK(StringResponse(messageByMarkNearness(isErrorBigger)))
+        case Some(isErrorBigger) => OK(responseByMarkNearness(isErrorBigger))
       }
     }.recover {
       case e: Exception => FAIL(ErrorResponse(400, "wrong arguments")) //todo
     }
   }
 
-  private def messageByMarkNearness(isErrorBigger: Boolean): String = isErrorBigger match {
-    case true  => "close to mark"
-    case false => "far from mark"
+  private def responseByMarkNearness(isErrorBigger: Boolean): StringResponse = isErrorBigger match {
+    case true  => Responses.closeToMarkResponse
+    case false => Responses.farFromMarkResponse
   }
 
   def addUserMark(newMark: AddUserMark): Future[Response[StringResponse]] = {
