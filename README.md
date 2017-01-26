@@ -1,10 +1,10 @@
 # GeoService
 This service provide some basic functionality for GeoTags. It have next API:
 
-1. */checkUserLocation*: how far is user from his mark
-2. */addUserMark*: add new UserMark
-3. */updateUserMark*: update UserMark or remove it
-4. */tileStat*: shows GeoTile statistics (how many UserMarks is there)
+1. **/checkUserLocation**: how far is user from his mark
+2. **/addUserMark**: add new UserMark
+3. **/updateUserMark**: update UserMark or remove it
+4. **/tileStat**: shows GeoTile statistics (how many UserMarks is there)
 
 **limitation**: user can have only one mark (easy to fix)
 
