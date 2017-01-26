@@ -18,7 +18,6 @@ libraryDependencies ++= {
 
     "ch.qos.logback"             %   "logback-classic"             % "1.1.7",
     "com.typesafe.scala-logging" %%  "scala-logging"               % "3.5.0",
-    "com.typesafe.akka"          %%  "akka-slf4j"                  % "2.4.16", //todo: remove maybe
 
     "org.specs2"                 %%  "specs2-core"                 % "3.8.6"    % Test,
     "org.mockito"                %   "mockito-core"                % "1.10.19"  % Test
