@@ -6,7 +6,7 @@ import akka.actor.ActorSystem
 import akka.io.IO
 import akka.pattern.ask
 import akka.util.Timeout
-import com.pronvis.onefactor.test.data.dao.{IGeoTilesDao, IUserMarksDao, InMemoryGeoTilesDao, InMemoryUserMarkDao}
+import com.pronvis.onefactor.test.data.dao.{IGeoTilesDao, IUserMarksDao, InMemoryGeoTilesDao, InMemoryUserMarksDao}
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import spray.can.Http
@@ -19,7 +19,7 @@ object Main extends LazyLogging {
   def main(args: Array[String]) {
     val daos = Try {
       val userMarkFile = new File("/tmp/geoservice/data/UserMarks.csv")
-      val userMarksDao = InMemoryUserMarkDao(userMarkFile)
+      val userMarksDao = InMemoryUserMarksDao(userMarkFile)
 
       val geoTileFile = new File("/tmp/geoservice/data/GeoTiles.csv")
       val geoTilesDao = InMemoryGeoTilesDao(geoTileFile)
