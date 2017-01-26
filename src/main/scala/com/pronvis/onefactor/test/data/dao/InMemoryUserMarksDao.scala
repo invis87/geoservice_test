@@ -17,7 +17,11 @@ object InMemoryUserMarksDao extends LazyLogging {
     })
 
     logger.debug("Parsing file `${file.getAbsolutePath}` to create InMemoryUserMarksDao...")
-    new InMemoryUserMarksDao(TrieMap(uMarks.toSeq:_*))
+    apply(TrieMap(uMarks.toSeq:_*))
+  }
+
+  def apply(map: Map[Long, UserMark]): InMemoryUserMarksDao = {
+    new InMemoryUserMarksDao(map)
   }
 }
 
