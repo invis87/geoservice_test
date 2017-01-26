@@ -28,6 +28,11 @@ class GeoServiceIntegrationTest extends Specification with Specs2RouteTest with 
       userMarksDao.add(2l, EarthPoint(10.5f, 20f))
       userMarksDao.add(3l, EarthPoint(10f, 20.999f))
 
+      Post("/addUserMark", AddUserMark(3l, EarthPoint(10.9999f, 20.55f))) ~> route ~> check {
+        response.status === StatusCodes.OK
+        responseAs[StringResponse] === StringResponses.userAlreadyHaveMark(3l)
+      }
+
       Get("/tileStat?lat=10.32&lon=20.23") ~> route ~> check {
         response.status === StatusCodes.OK
         responseAs[TileStatsResponse].marksInTile === 3
@@ -35,6 +40,7 @@ class GeoServiceIntegrationTest extends Specification with Specs2RouteTest with 
 
       Post("/addUserMark", AddUserMark(4l, EarthPoint(10.9999f, 20.55f))) ~> route ~> check {
         response.status === StatusCodes.OK
+        responseAs[StringResponse] === StringResponses.markAdded(4l)
       }
 
       Get("/tileStat?lat=10.69&lon=20.73") ~> route ~> check {
