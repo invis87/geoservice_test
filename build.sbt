@@ -1,4 +1,4 @@
-name := "Geoservice_test"
+name := "geoservice-test"
 
 version := "1.0"
 
@@ -30,6 +30,7 @@ fork in run := true
 cancelable in Global := true
 
 mainClass in Compile := Some("com.pronvis.onefactor.test.Main")
+mainClass in assembly := Some("com.pronvis.onefactor.test.Main")
 
 val dataGeneratorMain = "com.pronvis.onefactor.test/GenerateData"
 val generateData = TaskKey[Unit]("generate-data", "Generate UserMarks and GeoTiles data.")

@@ -15,7 +15,7 @@ object InMemoryGeoTilesDao extends LazyLogging{
       geoTile.coord -> geoTile
     }).toMap
 
-    logger.debug("Parsing file `${file.getAbsolutePath}` to create InMemoryGeoTilesDao...")
+    logger.debug(s"Parsing file `${file.getAbsolutePath}` to create InMemoryGeoTilesDao...")
     apply(geoTiles)
   }
 

@@ -18,10 +18,10 @@ object Main extends LazyLogging {
 
   def main(args: Array[String]) {
     val daos = Try {
-      val userMarkFile = new File("/tmp/geoservice/data/UserMarks.csv")
+      val userMarkFile = new File(args(0))
       val userMarksDao = InMemoryUserMarksDao(userMarkFile)
 
-      val geoTileFile = new File("/tmp/geoservice/data/GeoTiles.csv")
+      val geoTileFile = new File(args(1))
       val geoTilesDao = InMemoryGeoTilesDao(geoTileFile)
 
       (userMarksDao, geoTilesDao)

@@ -16,7 +16,7 @@ object InMemoryUserMarksDao extends LazyLogging {
       uMark.userId -> uMark
     })
 
-    logger.debug("Parsing file `${file.getAbsolutePath}` to create InMemoryUserMarksDao...")
+    logger.debug(s"Parsing file `${file.getAbsolutePath}` to create InMemoryUserMarksDao...")
     apply(TrieMap(uMarks.toSeq:_*))
   }
 
