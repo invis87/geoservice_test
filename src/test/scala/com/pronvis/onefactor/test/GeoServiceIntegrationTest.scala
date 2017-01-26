@@ -1,7 +1,7 @@
 package com.pronvis.onefactor.test
 
 import com.pronvis.onefactor.test.api.Requests.{AddUserMark, UpdateUserMark}
-import com.pronvis.onefactor.test.api.Responses.TileStatsResponse
+import com.pronvis.onefactor.test.api.Responses.{StringResponse, StringResponses, TileStatsResponse}
 import com.pronvis.onefactor.test.data.dao.{IGeoTilesDao, IUserMarksDao, InMemoryGeoTilesDao, InMemoryUserMarksDao}
 import com.pronvis.onefactor.test.data.{EarthPoint, GeoTile, TileCoord, UserMark}
 import org.specs2.mutable.Specification
@@ -44,6 +44,7 @@ class GeoServiceIntegrationTest extends Specification with Specs2RouteTest with 
 
       Post("/updateUserMark", UpdateUserMark(1l, Some(EarthPoint(20.9999f, 20.55f)))) ~> route ~> check {
         response.status === StatusCodes.OK
+        responseAs[StringResponse] === StringResponses.markUpdated(1l)
       }
 
       Get("/tileStat?lat=10.11&lon=20.223") ~> route ~> check {

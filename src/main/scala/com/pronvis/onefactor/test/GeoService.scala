@@ -3,7 +3,7 @@ package com.pronvis.onefactor.test
 import akka.util.Timeout
 import com.pronvis.onefactor.test.api.Requests.{AddUserMark, UpdateUserMark}
 import com.pronvis.onefactor.test.api.Responses
-import com.pronvis.onefactor.test.api.Responses.{ErrorResponse, StringResponse, TileStatsResponse}
+import com.pronvis.onefactor.test.api.Responses.{ErrorResponse, StringResponse, StringResponses, TileStatsResponse}
 import com.pronvis.onefactor.test.data.{EarthPoint, TileCoord, UserMark}
 import com.pronvis.onefactor.test.data.dao.{IGeoTilesDao, IUserMarksDao}
 import com.typesafe.scalalogging.LazyLogging
@@ -64,7 +64,7 @@ trait GeoService extends HttpService with LazyLogging {
         case Some(_) => OK(StringResponse(s"${ newMark.userId } already have a mark."))
         case None    =>
           userMarksDao.add(newMark.userId, newMark.markLocation)
-          OK(StringResponse(s"Successfully add mark for user ${ newMark.userId }"))
+          OK(StringResponses.markAdded(newMark.userId))
       }
     }.recover {
       case e: Exception =>
@@ -79,13 +79,13 @@ trait GeoService extends HttpService with LazyLogging {
       updateMark.markLocation match {
         case None             =>
           val removeResult = userMarksDao.remove(updateMark.userId)
-          val msg = messageAfterRemoving(updateMark.userId, removeResult)
+          val response = messageAfterRemoving(updateMark.userId, removeResult)
           logger.debug(s"[updateUserMark]: UserMark removed (userId: ${updateMark.userId})")
-          OK(StringResponse(msg))
+          OK(response)
         case Some(earthPoint) =>
           userMarksDao.update(updateMark.userId, earthPoint)
           logger.debug(s"[updateUserMark]: UserMark updated (userId: ${updateMark.userId}) to $earthPoint")
-          OK(StringResponse(s"UserMark (userId: ${ updateMark.userId }) successfully updated"))
+          OK(StringResponses.markUpdated(updateMark.userId))
       }
     }.recover {
       case e: Exception =>
@@ -94,9 +94,9 @@ trait GeoService extends HttpService with LazyLogging {
     }
   }
 
-  private def messageAfterRemoving(userId: Long, removeResult: Option[UserMark]): String = removeResult match {
-    case None    => s"Nothing was removed, user (id: $userId) don't have mark"
-    case Some(_) => s"Mark was removed for user $userId"
+  private def messageAfterRemoving(userId: Long, removeResult: Option[UserMark]): StringResponse = removeResult match {
+    case None    => StringResponses.markWasNotRemoved(userId)
+    case Some(_) => StringResponses.markRemoved(userId)
   }
 
   def tileStat(latitude: String, longitude: String): Future[Response[TileStatsResponse]] = {

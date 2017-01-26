@@ -1,7 +1,7 @@
 package com.pronvis.onefactor.test
 
 import com.pronvis.onefactor.test.api.Requests.UpdateUserMark
-import com.pronvis.onefactor.test.api.Responses.StringResponse
+import com.pronvis.onefactor.test.api.Responses.{StringResponse, StringResponses}
 import com.pronvis.onefactor.test.data.dao.{IGeoTilesDao, IUserMarksDao}
 import com.pronvis.onefactor.test.data.{EarthPoint, UserMark}
 import org.mockito.Mockito._
@@ -31,7 +31,7 @@ class GeoServiceUpdateTest1 extends Specification with Specs2RouteTest with GeoS
       doReturn(None).when(userMarksDao).remove(userId)
       Post(s"/updateUserMark", UpdateUserMark(userId, None)) ~> route ~> check {
         response.status === StatusCodes.OK
-        responseAs[StringResponse].message === s"Nothing was removed, user (id: $userId) don't have mark"
+        responseAs[StringResponse] === StringResponses.markWasNotRemoved(userId)
       }
     }
 

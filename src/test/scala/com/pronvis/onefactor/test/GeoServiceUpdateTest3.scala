@@ -1,7 +1,7 @@
 package com.pronvis.onefactor.test
 
 import com.pronvis.onefactor.test.api.Requests.UpdateUserMark
-import com.pronvis.onefactor.test.api.Responses.StringResponse
+import com.pronvis.onefactor.test.api.Responses.{StringResponse, StringResponses}
 import com.pronvis.onefactor.test.data.dao.{IGeoTilesDao, IUserMarksDao}
 import com.pronvis.onefactor.test.data.{EarthPoint, UserMark}
 import org.mockito.Mockito._
@@ -28,10 +28,11 @@ class GeoServiceUpdateTest3 extends Specification with Specs2RouteTest with GeoS
 
     "update UserMark if UpdateUserMark.markLocation is Some" in {
       val userId = 5l
-      val earthPont = EarthPoint(44.34f, 121.55f)
-      Post(s"/updateUserMark", UpdateUserMark(userId, Some(earthPont))) ~> route ~> check {
-        verify(userMarksDao).update(userId, earthPont)
+      val earthPoint = EarthPoint(44.34f, 121.55f)
+      Post(s"/updateUserMark", UpdateUserMark(userId, Some(earthPoint))) ~> route ~> check {
+        verify(userMarksDao).update(userId, earthPoint)
         response.status === StatusCodes.OK
+        responseAs[StringResponse] === StringResponses.markUpdated(userId)
       }
     }
 

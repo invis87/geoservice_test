@@ -1,7 +1,7 @@
 package com.pronvis.onefactor.test
 
 import com.pronvis.onefactor.test.api.Requests.UpdateUserMark
-import com.pronvis.onefactor.test.api.Responses.StringResponse
+import com.pronvis.onefactor.test.api.Responses.{StringResponse, StringResponses}
 import com.pronvis.onefactor.test.data.dao.{IGeoTilesDao, IUserMarksDao}
 import com.pronvis.onefactor.test.data.{EarthPoint, UserMark}
 import org.mockito.Mockito._
@@ -28,9 +28,12 @@ class GeoServiceUpdateTest extends Specification with Specs2RouteTest with GeoSe
 
     "remove UserMark if UpdateUserMark.markLocation is None" in {
       val userId = 5l
+      val earthPoint = EarthPoint(44.4f, 12.535f)
+      doReturn(Some(UserMark(userId, earthPoint))).when(userMarksDao).remove(userId)
       Post(s"/updateUserMark", UpdateUserMark(userId, None)) ~> route ~> check {
         verify(userMarksDao).remove(userId)
         response.status === StatusCodes.OK
+        responseAs[StringResponse] === StringResponses.markRemoved(userId)
       }
     }
 

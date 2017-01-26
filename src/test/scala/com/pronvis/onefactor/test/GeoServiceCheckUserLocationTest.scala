@@ -2,7 +2,7 @@ package com.pronvis.onefactor.test
 
 import com.pronvis.onefactor.test.api.Requests.{AddUserMark, UpdateUserMark}
 import com.pronvis.onefactor.test.api.Responses
-import com.pronvis.onefactor.test.api.Responses.StringResponse
+import com.pronvis.onefactor.test.api.Responses.{StringResponse, StringResponses}
 import com.pronvis.onefactor.test.data.dao.{IGeoTilesDao, IUserMarksDao, InMemoryGeoTilesDao, InMemoryUserMarksDao}
 import com.pronvis.onefactor.test.data.{EarthPoint, GeoTile, TileCoord, UserMark}
 import org.specs2.mutable.Specification
@@ -31,6 +31,7 @@ class GeoServiceCheckUserLocationTest extends Specification with Specs2RouteTest
     "use TileError in Tile where Marker is placed" in {
       Post("/addUserMark", AddUserMark(1l, EarthPoint(10.01f, 10.01f))) ~> route ~> check {
         response.status === StatusCodes.OK
+        responseAs[StringResponse] === StringResponses.markAdded(1l)
       }
 
       Get("/checkUserLocation?uId=1&lat=22.22&lon=10.12") ~> route ~> check {
@@ -40,10 +41,12 @@ class GeoServiceCheckUserLocationTest extends Specification with Specs2RouteTest
 
       Post("/updateUserMark", UpdateUserMark(1l, None)) ~> route ~> check {
         response.status === StatusCodes.OK
+        responseAs[StringResponse] === StringResponses.markRemoved(1l)
       }
 
       Post("/addUserMark", AddUserMark(1l, EarthPoint(22.07f, 10.51f))) ~> route ~> check {
         response.status === StatusCodes.OK
+        responseAs[StringResponse] === StringResponses.markAdded(1l)
       }
 
       Get("/checkUserLocation?uId=1&lat=10.22&lon=10.12") ~> route ~> check {
