@@ -29,10 +29,9 @@ trait GeoService extends HttpService with LazyLogging {
 
   def checkUserLocation(uId: String, latitude: String, longitude: String): Future[Response[StringResponse]] = {
     Future {
-      logger.debug("inside checkUserLocation method")
       val userId = uId.toLong
       val uLocation = EarthPoint(latitude.toFloat, longitude.toFloat)
-      logger.debug("arguments parsed successfully")
+      logger.debug(s"[checkUserLocation]: arguments parsed successfully. userId=$userId; userLocation=$uLocation")
 
       val isErrorBigger = for {
         uMark <- userMarksDao.get(userId)
@@ -40,13 +39,16 @@ trait GeoService extends HttpService with LazyLogging {
         markTileCoord = TileCoord(uMark.location)
         markTile <- geoTilesDao.getTile(markTileCoord)
       } yield distToMark < markTile.distanceError
+      logger.debug(s"[checkUserLocation]: distance to mark calculated, result(close or not): $isErrorBigger")
 
       isErrorBigger match {
         case None                => FAIL(ErrorResponse(400, "User do not have a mark OR there is no information about tile distance error in marker tile."))
         case Some(isErrorBigger) => OK(responseByMarkNearness(isErrorBigger))
       }
     }.recover {
-      case e: Exception => FAIL(ErrorResponse(400, "wrong arguments")) //todo
+      case e: Exception =>
+        logger.error("[checkUserLocation]", e)
+        FAIL(ErrorResponse(400, "wrong arguments")) //todo
     }
   }
 
@@ -57,6 +59,7 @@ trait GeoService extends HttpService with LazyLogging {
 
   def addUserMark(newMark: AddUserMark): Future[Response[StringResponse]] = {
     Future {
+      logger.debug(s"[addUserMark]: to add $newMark")
       userMarksDao.get(newMark.userId) match {
         case Some(_) => OK(StringResponse(s"${ newMark.userId } already have a mark."))
         case None    =>
@@ -64,23 +67,30 @@ trait GeoService extends HttpService with LazyLogging {
           OK(StringResponse(s"Successfully add mark for user ${ newMark.userId }"))
       }
     }.recover {
-      case e: Exception => FAIL(ErrorResponse(400, "something went wrong")) //todo
+      case e: Exception =>
+        logger.error("[addUserMark]", e)
+        FAIL(ErrorResponse(400, "something went wrong")) //todo
     }
   }
 
   def updateUserMark(updateMark: UpdateUserMark): Future[Response[StringResponse]] = {
     Future {
+      logger.debug(s"[updateUserMark]: to add $updateMark")
       updateMark.markLocation match {
         case None             =>
           val removeResult = userMarksDao.remove(updateMark.userId)
           val msg = messageAfterRemoving(updateMark.userId, removeResult)
+          logger.debug(s"[updateUserMark]: UserMark removed (userId: ${updateMark.userId})")
           OK(StringResponse(msg))
         case Some(earthPoint) =>
           userMarksDao.update(updateMark.userId, earthPoint)
+          logger.debug(s"[updateUserMark]: UserMark updated (userId: ${updateMark.userId}) to $earthPoint")
           OK(StringResponse(s"UserMark (userId: ${ updateMark.userId }) successfully updated"))
       }
     }.recover {
-      case e: Exception => FAIL(ErrorResponse(400, "something went wrong")) //todo
+      case e: Exception =>
+        logger.error("[updateUserMark]", e)
+        FAIL(ErrorResponse(400, "something went wrong")) //todo
     }
   }
 
@@ -91,13 +101,15 @@ trait GeoService extends HttpService with LazyLogging {
 
   def tileStat(latitude: String, longitude: String): Future[Response[TileStatsResponse]] = {
     Future {
-      logger.debug("inside tileStat method")
+      logger.debug(s"[tileStat]: latitude=$latitude, longitude=$longitude")
       val point = TileCoord(EarthPoint(latitude.toFloat, longitude.toFloat))
-      logger.debug("arguments parsed successfully")
       val marksInTile = userMarksDao.all().par.count(um => TileCoord(um.location) == point)
+      logger.debug(s"[tileStat]: found $marksInTile UserMarkers in $point")
       OK(TileStatsResponse(marksInTile))
     }.recover {
-      case e: Exception => FAIL(ErrorResponse(400, "something went wrong")) //todo
+      case e: Exception =>
+        logger.error("[tileStat]", e)
+        FAIL(ErrorResponse(400, "something went wrong")) //todo
     }
   }
 
